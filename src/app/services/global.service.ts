@@ -30,8 +30,23 @@ export class GlobalService {
   }
 
   getData(callback) {
-
     this.http.get(`${environment.baseURL}user/${this.userData.id}.json`).toPromise().then((res) => {
+      callback({ success: res })
+    }).catch((err) => {
+      callback({ error: err })
+    })
+  }
+
+  getSelectedCanvas(id ,callback) {
+    this.http.get(`${environment.baseURL}list/${id}.json`).toPromise().then((res) => {
+      callback({ success: res })
+    }).catch((err) => {
+      callback({ error: err })
+    })
+  }
+
+  getSharedList(callback) {
+    this.http.get(`${environment.baseURL}list.json`).toPromise().then((res) => {
       callback({ success: res })
     }).catch((err) => {
       callback({ error: err })

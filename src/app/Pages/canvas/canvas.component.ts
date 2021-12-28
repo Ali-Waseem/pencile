@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocialAuthService } from 'angularx-social-login';
 import { fabric } from 'fabric';
+import * as lodash from 'lodash';
 import { Canvas } from 'src/app/Model/canvas';
 import { Share } from '../../Model/shared-canvas';
 import { GlobalService } from '../../services/global.service';
+
 
 @Component({
   selector: 'app-canvas',
@@ -15,42 +17,44 @@ export class CanvasComponent implements OnInit {
 
   mousePressed: boolean = false
   currentMode
-  canvas:any;
+  canvas
   svg : any
     mode = {
     pan :'pan',
     draw : 'draw'
   }
+  shareCanvasList:Share
+  selectedID: any;
   constructor(
-    private global : GlobalService,
+    public global : GlobalService,
     private route : Router,
     private authService : SocialAuthService,
   ) { }
 
   ngOnInit(): void {
-
+    this.selectedID =this.global.userData.id
     let data = localStorage.getItem("userData")
     if(data == null){
       this.route.navigateByUrl('login')
     }
 
     this.canvas= new fabric.Canvas("canvas" , {
-      // isDrawingMode:true,
       width:800,
       height:400,
       selection:false,
     })
-    this.canvas.renderAll()
-    this.getLastCanvas()
+    this.canvas.renderAll();
+    this.getLastCanvas();
+    this.getSharedCanvas();
 
-    this.canvas.on('mouse:up' , (obj) => {
+    this.canvas.on('mouse:up' , () => {
       console.log("-----------MOUSE UP---------")
       this.mousePressed = false
       this.canvas.setCursor('default')
       this.saveCanvas()
     })
 
-    this.canvas.on('mouse:down' , (obj) => {
+    this.canvas.on('mouse:down' , () => {
       console.log("-----------MOUSE DOWN---------")
       this.mousePressed = true
       if(this.mode.pan == this.currentMode){
@@ -71,10 +75,7 @@ export class CanvasComponent implements OnInit {
         this.canvas.isDrawingMode = true
         this.canvas.renderAll()
       }
-
-
     })
-
   }
 
 
@@ -111,6 +112,7 @@ export class CanvasComponent implements OnInit {
       }
       else{
         this.currentMode = this.mode.draw
+        this.canvas.renderAll()
       }
     }
   }
@@ -118,7 +120,8 @@ export class CanvasComponent implements OnInit {
   shareCanvas(){
     this.svg = this.canvas.toSVG();
     let body: Share = {
-      id:this.global.userData.id,
+      userId:this.global.userData.id,
+      userName: this.global.userData.name,
       data: this.svg
     }
     this.global.shareCanvas(body , result => {
@@ -163,6 +166,37 @@ export class CanvasComponent implements OnInit {
     }
     localStorage.clear()
     this.route.navigateByUrl('login')
+  }
+
+
+  getSharedCanvas(){
+    this.global.getSharedList(res => {
+      console.log("getSharedCanvas",res.success)
+      this.shareCanvasList = lodash.values(res.success)
+    })
+  }
+
+  getSelectedCanvas(id){
+    debugger
+    this.selectedID =id
+    if(id == this.global.userData.id){
+      this.canvas.clear()
+      this.getLastCanvas()
+    }
+    else {
+      this.global.getSelectedCanvas(id , result => {
+        if(result && result.success){
+          this.canvas.clear()
+          new fabric.loadSVGFromString(result.success.data, o =>{
+            this.canvas.add(...o)
+          })
+        }
+        else {
+          return
+        }
+        console.log(result)
+      })
+    }
   }
 
 }

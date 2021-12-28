@@ -1,25 +1,36 @@
-<div class="row mx-2 mt-5">
-  <div class="col-md-1 ">
-    <button class="btn btn-warning ml-3" (click)="toggleMode(mode.draw)">Draw</button>
+<div class="row text-center mx-2 mt-5">
+  <div class="col-md-1">
+    <button class="btn mybtn btn-warning ml-3" [disabled]="global.userData.id != selectedID"
+      (click)="toggleMode(mode.draw)">Draw</button>
   </div>
   <div class="col-md-1 ">
-    <button class="btn btn-info ml-3" (click)="shareCanvas()">Share</button>
+    <button class="btn mybtn btn-primary ml-3" [disabled]="global.userData.id != selectedID"
+      (click)="shareCanvas()">Share</button>
   </div>
-  <div class="col-md-1 ">
-    <button class="btn btn-danger ml-3" (click)="clear()">Clear</button>
+  <div class="col-md-1">
+    <button class="btn mybtn btn-danger ml-3" [disabled]="global.userData.id != selectedID"
+      (click)="clear()">Clear</button>
   </div>
-  <div class="col-md-2">
+  <div class="col-md-2 ">
     <span><b>Choose Color:</b></span>
-    <input class="form-group mx-2" (change)="changeColor($event)" type="color" />
+    <input [disabled]="global.userData.id != selectedID" class="form-group mx-2" (change)="changeColor($event)"
+      type="color" />
   </div>
-  <div class="col-md-2">
-    <span class="float-left"><b>Upload Image:</b></span>
-    <input id="img" class="form-group mx-2" type="file" accept="image/*" (change)="addImg($event)" />
+  <div class="col-md-2 ">
+    <!-- <span class="float-left"><b>Upload Image:</b></span> -->
+    <input [disabled]="global.userData.id != selectedID" id="img" class="form-group mx-2" type="file" accept="image/*"
+      (change)="addImg($event)" />
+  </div>
+  <div class="col-md-4">
+    <select (change)="getSelectedCanvas($event.target.value)" class="form-select">
+      <option selected [value]="global.userData.id">My Own Canvas</option>
+      <option *ngFor="let i of shareCanvasList" [value]="i.userId">{{i.userName}}</option>
+    </select>
   </div>
   <div class="col-md-1 ">
-    <button class="btn btn-danger ml-3" (click)="logout()">Logout</button>
+    <button class="btn mybtn btn-danger ml-3" (click)="logout()">Logout</button>
   </div>
 </div>
-<div class="p-3">
+<div class="p-3" [ngClass]="{'disable': global.userData.id != selectedID}">
   <canvas id="canvas"></canvas>
 </div>

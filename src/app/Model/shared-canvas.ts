@@ -1,4 +1,5 @@
 export interface Share {
-  id: string
+  userId: string
+  userName: string
   data: string
 }
