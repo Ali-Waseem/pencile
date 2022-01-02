@@ -6,6 +6,8 @@ import * as lodash from 'lodash';
 import { Canvas } from 'src/app/Model/canvas';
 import { Share } from '../../Model/shared-canvas';
 import { GlobalService } from '../../services/global.service';
+// import { BootstrapAlertService, BootstrapAlert } from 'ng-bootstrap-alert';
+
 
 
 @Component({
@@ -48,14 +50,12 @@ export class CanvasComponent implements OnInit {
     this.getSharedCanvas();
 
     this.canvas.on('mouse:up' , () => {
-      console.log("-----------MOUSE UP---------")
       this.mousePressed = false
       this.canvas.setCursor('default')
       this.saveCanvas()
     })
 
     this.canvas.on('mouse:down' , () => {
-      console.log("-----------MOUSE DOWN---------")
       this.mousePressed = true
       if(this.mode.pan == this.currentMode){
         this.canvas.setCursor('grab')
@@ -94,7 +94,6 @@ export class CanvasComponent implements OnInit {
       data: this.svg
     }
     this.global.saveData(body , (callback)=>{
-      console.log(callback)
     })
   }
 
@@ -124,9 +123,7 @@ export class CanvasComponent implements OnInit {
       userName: this.global.userData.name,
       data: this.svg
     }
-    this.global.shareCanvas(body , result => {
-      console.log("Successfully shared")
-    })
+    this.global.shareCanvas(body , () => {})
   }
 
   addImg(e){
@@ -171,7 +168,6 @@ export class CanvasComponent implements OnInit {
 
   getSharedCanvas(){
     this.global.getSharedList(res => {
-      console.log("getSharedCanvas",res.success)
       this.shareCanvasList = lodash.values(res.success)
     })
   }
@@ -194,7 +190,6 @@ export class CanvasComponent implements OnInit {
         else {
           return
         }
-        console.log(result)
       })
     }
   }

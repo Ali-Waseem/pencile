@@ -24,7 +24,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.authState.subscribe(user => {
       if(user && user != null)  {
-        console.log(user)
         let userData : User = {
           id: user.id,
           email: user.email,

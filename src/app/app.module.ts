@@ -16,11 +16,12 @@ import { FormsModule } from '@angular/forms';
     LoginComponent
   ],
   imports: [
+    // BootstrapAlertModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     SocialLoginModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [
     {
